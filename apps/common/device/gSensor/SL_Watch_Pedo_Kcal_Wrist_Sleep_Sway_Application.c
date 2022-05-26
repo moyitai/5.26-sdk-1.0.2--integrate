@@ -170,7 +170,7 @@ unsigned int get_step_count(void)
 unsigned char SL_MCU_SLEEP_ALGO_FUNCTION(void);
 unsigned int  SL_SC7A20_PEDO_KCAL_WRIST_SLEEP_SWAY_ALGO(void)
 {
-	printf("%s\n",__func__);
+	//printf("%s\n",__func__);
 #if SL_Sensor_Algo_Release_Enable==0x00
 	unsigned char         sl_i;
 #endif
