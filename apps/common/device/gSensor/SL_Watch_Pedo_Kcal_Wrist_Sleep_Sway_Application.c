@@ -222,16 +222,16 @@ unsigned int  SL_SC7A20_PEDO_KCAL_WRIST_SLEEP_SWAY_ALGO(void)
 		SL_CADENCE_AMP       = SL_Pedo_Step_Get_Avg_Amp();
 		/*****motion degree***运动程度*/
 		SL_CADENCE_DEGREE    = SL_Pedo_Step_Get_Motion_Degree();
-		printf("44444SC7A20_FIFO_NUM = %d",SC7A20_FIFO_NUM);
-		printf("55555SSL_STEP = %d",SL_STEP);
-		printf("666666_SL_SLEEP_ACTIVE = %d",SL_SLEEP_ACTIVE);
-		printf("777777-SC7A20_FIFO_NUM = %d",SC7A20_FIFO_NUM);
-		printf("888888-SL_STEP_MOTION = %d",SL_STEP_MOTION);
-		printf("9999999-SL_DISTANCE = %d",SL_DISTANCE);
-		printf("aaaaaa-SL_KCAL = %d",SL_KCAL);
-		printf("bbbbbb-SL_CADENCE_STEP = %d",SL_CADENCE_STEP);
-		printf("cccccc-SL_CADENCE_AMP = %d",SL_CADENCE_AMP);
-		printf("ddddddd-SL_CADENCE_DEGREE = %d",SL_CADENCE_DEGREE);
+		// printf("44444SC7A20_FIFO_NUM = %d",SC7A20_FIFO_NUM);
+		// printf("55555SSL_STEP = %d",SL_STEP);
+		// printf("666666_SL_SLEEP_ACTIVE = %d",SL_SLEEP_ACTIVE);
+		// printf("777777-SC7A20_FIFO_NUM = %d",SC7A20_FIFO_NUM);
+		// printf("888888-SL_STEP_MOTION = %d",SL_STEP_MOTION);
+		// printf("9999999-SL_DISTANCE = %d",SL_DISTANCE);
+		// printf("aaaaaa-SL_KCAL = %d",SL_KCAL);
+		// printf("bbbbbb-SL_CADENCE_STEP = %d",SL_CADENCE_STEP);
+		// printf("cccccc-SL_CADENCE_AMP = %d",SL_CADENCE_AMP);
+		// printf("ddddddd-SL_CADENCE_DEGREE = %d",SL_CADENCE_DEGREE);
 
 //	    if(SL_STEP>200)
 //	    {

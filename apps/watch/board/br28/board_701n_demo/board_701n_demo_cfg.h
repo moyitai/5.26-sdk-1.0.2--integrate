@@ -638,7 +638,7 @@ DAC硬件上的连接方式,可选的配置：
 //*********************************************************************************//
 #define TCFG_HR_SENSOR_ENABLE                     1     //hrSensor使能
 #define TCFG_P11HR_SENSOR_ENABLE                  0     //使用p11 sensor hub,iic 等具体参数在具体工程配置
-#define TCFG_SPO2_SENSOR_ENABLE					  0   	//SPO2sensor使能
+#define TCFG_SPO2_SENSOR_ENABLE					  1   	//SPO2sensor使能
 #define TCFG_HRS3300_EN                           0
 #define TCFG_HRS3603_EN				 			  0
 #define TCFG_HRS1662_EN				 			  1

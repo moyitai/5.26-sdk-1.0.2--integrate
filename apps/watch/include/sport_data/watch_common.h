@@ -2,7 +2,7 @@
 #define __WATCH_COMMON_H__
 #include "os/os_type.h"
 #define WATCH_DATA_TEST (!TCFG_GSENSOR_ENABLE)
-#define C_HEART_TEST  1
+#define C_HEART_TEST  0
 #define __data_len 128
 #define blocknum 10
 

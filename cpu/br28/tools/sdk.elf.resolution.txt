@@ -5596,7 +5596,6 @@ obj/Release/apps/watch/common/sport_data/watch_common.o
 -r=obj/Release/apps/watch/common/sport_data/watch_common.o,init_HR,l
 -r=obj/Release/apps/watch/common/sport_data/watch_common.o,init_MotionHR,l
 -r=obj/Release/apps/watch/common/sport_data/watch_common.o,resetMotion,l
--r=obj/Release/apps/watch/common/sport_data/watch_common.o,c_heart_rate,pl
 -r=obj/Release/apps/watch/common/sport_data/watch_common.o,get_max_heart_rate,pl
 -r=obj/Release/apps/watch/common/sport_data/watch_common.o,clr_hr_info,pl
 -r=obj/Release/apps/watch/common/sport_data/watch_common.o,algo_deal_sport_start,pl
@@ -5665,8 +5664,9 @@ obj/Release/apps/watch/common/sport_data/watch_common.o
 -r=obj/Release/apps/watch/common/sport_data/watch_common.o,scale_REM_evaluate,l
 -r=obj/Release/apps/watch/common/sport_data/watch_common.o,get_wakeup_times,l
 -r=obj/Release/apps/watch/common/sport_data/watch_common.o,DeepSleep_continuity_score,l
+-r=obj/Release/apps/watch/common/sport_data/watch_common.o,get_spo2_wear_results,l
+-r=obj/Release/apps/watch/common/sport_data/watch_common.o,get_spo_result,l
 -r=obj/Release/apps/watch/common/sport_data/watch_common.o,get_hrs_wear_results,l
--r=obj/Release/apps/watch/common/sport_data/watch_common.o,get_hrs_results,l
 -r=obj/Release/apps/watch/common/sport_data/watch_common.o,gsensor_io_ctl,l
 -r=obj/Release/apps/watch/common/sport_data/watch_common.o,strcmp,l
 -r=obj/Release/apps/watch/common/sport_data/watch_common.o,os_current_task,l
@@ -5700,7 +5700,11 @@ obj/Release/apps/watch/common/sport_data/watch_common.o
 -r=obj/Release/apps/watch/common/sport_data/watch_common.o,get_weardect_buf,l
 -r=obj/Release/apps/watch/common/sport_data/watch_common.o,init_WearDect,l
 -r=obj/Release/apps/watch/common/sport_data/watch_common.o,os_mutex_pend,l
+-r=obj/Release/apps/watch/common/sport_data/watch_common.o,get_hrs_results,l
 -r=obj/Release/apps/watch/common/sport_data/watch_common.o,os_mutex_post,l
+-r=obj/Release/apps/watch/common/sport_data/watch_common.o,get_SPO2_buf,l
+-r=obj/Release/apps/watch/common/sport_data/watch_common.o,init_SPO2,l
+-r=obj/Release/apps/watch/common/sport_data/watch_common.o,SPO2_run,l
 -r=obj/Release/apps/watch/common/sport_data/watch_common.o,puts,l
 -r=obj/Release/apps/watch/common/sport_data/watch_common.o,WP,pl
 -r=obj/Release/apps/watch/common/sport_data/watch_common.o,PI,pl
@@ -7357,8 +7361,6 @@ obj/Release/apps/watch/smartbox/sensors_data_opt/sport_data_info_opt/sport_info_
 -r=obj/Release/apps/watch/smartbox/sensors_data_opt/sport_data_info_opt/sport_info_bt_disconn.o,add_one_attr,l
 obj/Release/apps/watch/smartbox/sensors_data_opt/sport_data_info_opt/sport_info_continuous_heart_rate.o
 -r=obj/Release/apps/watch/smartbox/sensors_data_opt/sport_data_info_opt/sport_info_continuous_heart_rate.o,sport_info_continuous_heart_rate_attr_set,pl
--r=obj/Release/apps/watch/smartbox/sensors_data_opt/sport_data_info_opt/sport_info_continuous_heart_rate.o,printf,l
--r=obj/Release/apps/watch/smartbox/sensors_data_opt/sport_data_info_opt/sport_info_continuous_heart_rate.o,c_heart_rate,l
 -r=obj/Release/apps/watch/smartbox/sensors_data_opt/sport_data_info_opt/sport_info_continuous_heart_rate.o,watch_algo_handle_get,l
 -r=obj/Release/apps/watch/smartbox/sensors_data_opt/sport_data_info_opt/sport_info_continuous_heart_rate.o,sport_info_switch_record_update,l
 -r=obj/Release/apps/watch/smartbox/sensors_data_opt/sport_data_info_opt/sport_info_continuous_heart_rate.o,sport_info_mode_record_update,l
@@ -7550,6 +7552,8 @@ obj/Release/apps/watch/smartbox/sensors_data_opt/sports_data_opt/sport_data_bloo
 -r=obj/Release/apps/watch/smartbox/sensors_data_opt/sports_data_opt/sport_data_blood_oxygen.o,printf,l
 -r=obj/Release/apps/watch/smartbox/sensors_data_opt/sports_data_opt/sport_data_blood_oxygen.o,watch_blood_oxygen_handle_get,l
 -r=obj/Release/apps/watch/smartbox/sensors_data_opt/sports_data_opt/sport_data_blood_oxygen.o,zalloc,l
+-r=obj/Release/apps/watch/smartbox/sensors_data_opt/sports_data_opt/sport_data_blood_oxygen.o,sys_timeout_add,l
+-r=obj/Release/apps/watch/smartbox/sensors_data_opt/sports_data_opt/sport_data_blood_oxygen.o,read_spo2_data_task,l
 -r=obj/Release/apps/watch/smartbox/sensors_data_opt/sports_data_opt/sport_data_blood_oxygen.o,add_one_attr_with_submask_huge,l
 -r=obj/Release/apps/watch/smartbox/sensors_data_opt/sports_data_opt/sport_data_blood_oxygen.o,sport_data_global_var_deal,l
 obj/Release/apps/watch/smartbox/sensors_data_opt/sports_data_opt/sport_data_exercise_recovery_time.o
@@ -24656,6 +24660,13 @@ cpu/br28/liba/HeartRate_Calc.a.llvm.344.HeartRate_Calc.c
 cpu/br28/liba/sedentary.a.llvm.178.sedentary.c
 -r=cpu/br28/liba/sedentary.a.llvm.178.sedentary.c,Sedentary_remind,pl
 -r=cpu/br28/liba/sedentary.a.llvm.178.sedentary.c,resetSedentaryRemind,pl
+cpu/br28/liba/SPO2.a.llvm.196.SPO2.c
+-r=cpu/br28/liba/SPO2.a.llvm.196.SPO2.c,get_SPO2_buf,pl
+-r=cpu/br28/liba/SPO2.a.llvm.196.SPO2.c,init_SPO2,pl
+-r=cpu/br28/liba/SPO2.a.llvm.196.SPO2.c,memset,l
+-r=cpu/br28/liba/SPO2.a.llvm.196.SPO2.c,SPO2_run,pl
+-r=cpu/br28/liba/SPO2.a.llvm.196.SPO2.c,memcpy,l
+-r=cpu/br28/liba/SPO2.a.llvm.196.SPO2.c,getCurrentSPO2,pl
 cpu/br28/liba/libFFT_pi32v2_OnChip.a.llvm.6200.float_fft_wrap.cc
 -r=cpu/br28/liba/libFFT_pi32v2_OnChip.a.llvm.6200.float_fft_wrap.cc,flrfft,pl
 -r=cpu/br28/liba/libFFT_pi32v2_OnChip.a.llvm.6200.float_fft_wrap.cc,_rflfft_wrap,l

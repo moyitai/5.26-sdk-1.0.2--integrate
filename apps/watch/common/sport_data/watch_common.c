@@ -20,8 +20,6 @@
 #include "sport_info_sleep_detection.h"
 #include "sys_time.h"
 #include "clock_cfg.h"
-#include "BD_health_math.h"
-#include "gSensor/SL_Watch_Pedo_Kcal_Wrist_Sleep_Sway_Algorithm.h"
 
 #define USED_TIMER         (1)
 #define USED_TASK          (2)
@@ -69,6 +67,9 @@ static int data_temp_storage(void);
 extern void mem_stats(void);
 static u8 get_blood_oxygen_wear(void);
 static u8 get_heart_rate_wear(void);
+
+
+
 //***************************************************************
 //							api
 //***************************************************************
@@ -187,7 +188,6 @@ static int spo2_algo_disable(void)
     wspo2.workbuf = NULL;
     return 0;
 }
-
 static void refresh_spo2_data(void *p)
 {
     printf("%s %s", __func__, os_current_task());
@@ -195,7 +195,6 @@ static void refresh_spo2_data(void *p)
     int spo2sensorbuf[SPO2LEN] = {0};
     int spo2len = SPO2LEN;
     u8  SPO2_DATA = 0;
-	int HUI = 0;
     int spo2dlytime = (SPO2LEN * 100) / (SPO2POINT * SPO2FREQ);
     while (1) {
         os_sem_pend(&SPO2_SEM, 0);
@@ -210,7 +209,7 @@ static void refresh_spo2_data(void *p)
             if (hr_sensor_io_ctl(SPO2_SENSOR_READ_DATA, spo2sensorbuf) == 0) {//拿不到数据
                 os_time_dly(spo2dlytime);//延时
                 search_sensor_cnt++;//计数
-                if (search_sensor_cnt == 10) {//连续十次读数异常、结束读数
+                if (search_sensor_cnt == 30) {//连续十次读数异常、结束读数
                     log_e("sensor_dont_online\n");
                     search_sensor_cnt = 0;
                     break;
@@ -222,12 +221,10 @@ static void refresh_spo2_data(void *p)
             SPO2_DATA = get_spo_result();
 			wspo2.out[0] = get_spo2_wear_results();//getCurrentSPO2(wspo2.workbuf);
             /* 数据处理 */
-			HUI++;
-            if (HUI>10000/*cnt % ((u8)(SPO2FREQ * SPO2POINT / spo2len)) == 0*/) {//约每秒打印一次
-            HUI = 0;
+            if (cnt % ((u8)(SPO2FREQ * SPO2POINT / spo2len)) == 0) {//约每秒打印一次
                 printf("TASK SPO2=%d wear=%d cnt=%d\n", wspo2.SPO2, wspo2.out[0], cnt);
             }
-            if ((SPO2_DATA != 0) && get_spo2_wear_results()/*(cnt > (HRSENSOR_READ_FILT_TIME * (u8)(SPO2FREQ * SPO2POINT / spo2len)))*/) { //(SPO2FREQ*4/SPO2LEN)约1s
+            if ((SPO2_DATA != 0) & get_spo2_wear_results()/*(cnt > (HRSENSOR_READ_FILT_TIME * (u8)(SPO2FREQ * SPO2POINT / spo2len)))*/) { //(SPO2FREQ*4/SPO2LEN)约1s
                 if (SPO2_DATA != 0) {
                     wspo2.SPO2 = SPO2_DATA;
                 }
@@ -255,68 +252,6 @@ static void refresh_spo2_data(void *p)
     }
 }
 
-// static void refresh_spo2_data(void *p)
-// {
-//     printf("%s %s", __func__, os_current_task());
-//     int cnt = 0;
-//     int spo2sensorbuf[SPO2LEN] = {0};
-//     int spo2len = SPO2LEN;
-//     u8  SPO2_DATA = 0;
-//     int spo2dlytime = (SPO2LEN * 100) / (SPO2POINT * SPO2FREQ);
-//     while (1) {
-//         os_sem_pend(&SPO2_SEM, 0);
-//         printf("%s %s", __func__, os_current_task());
-//         os_mutex_pend(&SENSOR_MUTEX, 0);//防止心率血氧冲突
-//         /* 配置传感器 */
-//         hr_sensor_io_ctl(SPO2_SENSOR_DISABLE, NULL);//关闭传感器
-//         hr_sensor_io_ctl(SPO2_SENSOR_ENABLE, &spo2len);//打开传感器
-//         /* 延时等待第一组数据 */
-//         os_time_dly(spo2dlytime);
-//         for (cnt = 0; cnt <= (HRSENSOR_READ_SINGLE_PASS_TIME * (u8)(SPO2FREQ * SPO2POINT / spo2len));) {
-//             if (hr_sensor_io_ctl(SPO2_SENSOR_READ_DATA, spo2sensorbuf) == 0) {//拿不到数据
-//                 os_time_dly(spo2dlytime);//延时
-//                 search_sensor_cnt++;//计数
-//                 if (search_sensor_cnt == 10) {//连续十次读数异常、结束读数
-//                     log_e("sensor_dont_online\n");
-//                     search_sensor_cnt = 0;
-//                     break;
-//                 }
-//                 continue;
-//             }
-//             search_sensor_cnt = 0;
-//             SPO2_run(wspo2.workbuf, spo2len, spo2sensorbuf, wspo2.out);
-//             SPO2_DATA = getCurrentSPO2(wspo2.workbuf);
-//             /* 数据处理 */
-//             if (cnt % ((u8)(SPO2FREQ * SPO2POINT / spo2len)) == 0) {//约每秒打印一次
-//                 printf("TASK SPO2=%d wear=%d cnt=%d\n", wspo2.SPO2, wspo2.out[0], cnt);
-//             }
-//             if ((SPO2_DATA != 0) & (cnt > (HRSENSOR_READ_FILT_TIME * (u8)(SPO2FREQ * SPO2POINT / spo2len)))) { //(SPO2FREQ*4/SPO2LEN)约1s
-//                 if (SPO2_DATA != 0) {
-//                     wspo2.SPO2 = SPO2_DATA;
-//                 }
-//                 if (wspo2.spo2min == 0) {
-//                     wspo2.spo2min = wspo2.SPO2;
-//                 }
-//                 if ((wspo2.SPO2 < wspo2.spo2min) & (wspo2.SPO2 != 0)) {
-//                     wspo2.spo2min = wspo2.SPO2;
-//                 }
-//                 if (wspo2.SPO2 > wspo2.spo2max) {
-//                     wspo2.spo2max = wspo2.SPO2;
-//                 }
-//             }
-//             if (wspo2.read_status == 0) {//用于退出当前线程
-//                 break;
-//             }
-//             cnt++;
-//         }
-//         hr_sensor_io_ctl(SPO2_SENSOR_DISABLE, NULL);//关闭传感器
-//         wspo2.read_status = 0;
-//         os_mutex_post(&SENSOR_MUTEX);//防止心率血氧冲突
-//         if ((whr.continuous_hr_status == 1) | (whr.exercise_hr_detection_status == 1))  {
-//             watch_algo_hd.algo_heart_rate_task();
-//         }
-//     }
-// }
 
 int read_spo2_data_task(void)
 {
@@ -329,6 +264,7 @@ int read_spo2_data_task(void)
     }
     return TASK_OPEN_ERROR;
 }
+
 void spo2_data_task_exit(void)
 {
     wspo2.read_status = 0;
@@ -337,10 +273,11 @@ static u8 get_blood_oxygen()
 {
     printf("%s ", __func__);
 #if TCFG_SPO2_SENSOR_ENABLE
-    if (wspo2.work_status == 1) {
-        printf("spo2=%d  wear=%d", wspo2.SPO2, wspo2.out[0]);
+   // if (wspo2.work_status == 1) {
+   //     printf("spo2=%d  wear=%d", wspo2.SPO2, wspo2.out[0]);
+        wspo2.SPO2 = get_spo_result();
         return wspo2.SPO2;
-    }
+    //}
 #else
     wspo2.SPO2 = 99;
     return wspo2.SPO2;
@@ -351,6 +288,7 @@ static u8 get_blood_oxygen()
 
 static u8 get_blood_oxygen_wear(void)
 {
+	wspo2.out[0] = get_spo2_wear_results();
     return (u8)wspo2.out[0];
 }
 static u8 get_max_blood_oxygen(void)
@@ -431,7 +369,6 @@ static int hr_algo_disable(void)
     whr.workbuf = NULL;
     return true;
 }
-
 static int continous_hr_warn_cnt = 0;
 static u8 test_switch = 0;
 static int cnt = 0;
@@ -451,24 +388,33 @@ static void refresh_heart_rate_data(void *p)
         hr_sensor_io_ctl(HR_SENSOR_ENABLE, &hrlen);
         /* 延时等待第一组数据 */
         os_time_dly(hrdlytime);
-       while(1){
-#if TCFG_HRS3605_EN || TCFG_HRS1662_EN
-            HR_DATA = get_hrs_results();
+       while(1){// for (cnt = 0; cnt <= 100;cnt++/*((u8)(HRSENSOR_READ_SINGLE_PASS_TIME * HRFREQ * HRPOINT / hrlen));*/) {
+           /* if (hr_sensor_io_ctl(HR_SENSOR_READ_DATA, hrsensorbuf) == 0) {
+                os_time_dly(hrdlytime);
+                search_sensor_cnt++;
+                if (search_sensor_cnt == 5) {
+                    log_e("sensor_dont_online\n");
+                    search_sensor_cnt = 0;
+                    break;
+                }
+                continue;
+            }
+            search_sensor_cnt = 0;
+            wear_detection(whr.wear_workbuf, hrlen, hrsensorbuf, whr.out);
+            HeartRate_run(whr.workbuf, whr.wear_workbuf, HRLEN,  whr.out); //运行*/
+		
+            HR_DATA = get_hrs_results();//getCurrentHR(whr.workbuf);//实时调取心率
             whr.out[0] = get_hrs_wear_results();
-#else
-            HR_DATA = 99;
-            whr.out[0] = 1;
-#endif
 #if C_HEART_TEST//测试用
             if (test_switch) {
                 HR_DATA = 140;
             }
 #endif
-#if TCFG_HRS3605_EN || TCFG_HRS1662_EN
+            /* 辅助性处理 */
+            //if (cnt % 75*5/*((u8)(HRFREQ * HRPOINT / hrlen))*/ == 0) {
+           //     printf("REFRESH_HEART_DATA=%d,wear=%d HR=%d CNT=%d ", whr.HR, whr.out[0], HR_DATA, cnt);
+           // }
             if ((HR_DATA != 0) && get_hrs_wear_results()) {
-#else
-            if ((HR_DATA != 0)) {
-#endif
                 if (HR_DATA != 0) {
                     whr.HR = HR_DATA;
                 }
@@ -521,9 +467,12 @@ static void refresh_heart_rate_data(void *p)
                 }
                 continue;
             }
+            //printf("line================================================wwwwww");
             if (whr.read_status == 0) {
                 break;
             }
+           // printf("line================================================ggggggg");
+
         }
         //关闭传感器
         hr_sensor_io_ctl(HR_SENSOR_DISABLE, NULL);
@@ -531,111 +480,6 @@ static void refresh_heart_rate_data(void *p)
         os_mutex_post(&SENSOR_MUTEX);//防止心率血氧冲突
     }
 }
-// static int continous_hr_warn_cnt = 0;
-// static u8 test_switch = 0;
-// static void refresh_heart_rate_data(void *p)
-// {
-//     printf("%s %s", __func__, os_current_task());
-//     int cnt = 0;
-//     int hrsensorbuf[HRLEN] = {0};
-//     int hrlen = HRLEN;
-//     u8 HR_DATA = 0;
-//     int hrdlytime = ((HRLEN * 100) / (HRPOINT * HRFREQ));
-//     while (1) {
-//         os_sem_pend(&HR_SEM, 0);
-//         printf("%s %s", __func__, os_current_task());
-//         os_mutex_pend(&SENSOR_MUTEX, 0);//防止心率血氧冲突
-//         hr_sensor_io_ctl(HR_SENSOR_DISABLE, NULL);
-//         hr_sensor_io_ctl(HR_SENSOR_ENABLE, &hrlen);
-//         /* 延时等待第一组数据 */
-//         os_time_dly(hrdlytime);
-//         for (cnt = 0; cnt <= ((u8)(HRSENSOR_READ_SINGLE_PASS_TIME * HRFREQ * HRPOINT / hrlen));) {
-//             if (hr_sensor_io_ctl(HR_SENSOR_READ_DATA, hrsensorbuf) == 0) {
-//                 os_time_dly(hrdlytime);
-//                 search_sensor_cnt++;
-//                 if (search_sensor_cnt == 5) {
-//                     log_e("sensor_dont_online\n");
-//                     search_sensor_cnt = 0;
-//                     break;
-//                 }
-//                 continue;
-//             }
-//             search_sensor_cnt = 0;
-//             wear_detection(whr.wear_workbuf, hrlen, hrsensorbuf, whr.out);
-//             HeartRate_run(whr.workbuf, whr.wear_workbuf, HRLEN,  whr.out); //运行
-//             HR_DATA = getCurrentHR(whr.workbuf);//实时调取心率
-// #if C_HEART_TEST//测试用
-//             if (test_switch) {
-//                 HR_DATA = 140;
-//             }
-// #endif
-//             /* 辅助性处理 */
-//             if (cnt % ((u8)(HRFREQ * HRPOINT / hrlen)) == 0) {
-//                 printf("REFRESH_HEART_DATA=%d,wear=%d HR=%d CNT=%d ", whr.HR, whr.out[0], HR_DATA, cnt);
-//             }
-//             if ((HR_DATA != 0) & (cnt > ((u8)(HRSENSOR_READ_FILT_TIME * HRFREQ * HRPOINT / hrlen)))) {
-//                 if (HR_DATA != 0) {
-//                     whr.HR = HR_DATA;
-//                 }
-//                 if (whr.hrmin == 0) {
-//                     whr.hrmin = whr.HR;
-//                 }
-//                 if ((whr.HR < whr.hrmin) & (whr.HR != 0)) {
-//                     whr.hrmin = whr.HR;
-//                 }
-//                 if (whr.HR > whr.hrmax) {
-//                     whr.hrmax = whr.HR;
-//                 }
-//             }
-
-//             if (whr.continuous_hr_status == 1) {
-//                 if (wspo2.read_status == 1) { //检测到血氧线程挂起，则优先释放hrsensor资源给血氧
-//                     break;
-//                 }
-//                 whr.HR = HR_DATA;
-//                 if (whr.HR >= whr.continuous_hr_max) {
-//                     continous_hr_warn_cnt++;
-//                     printf("hr_warn_time=%ds target_time=%ds real_hr=%d dete_hr_max%d\n", continous_hr_warn_cnt, CONTINUOUS_HR_WARN_TIME, whr.HR, whr.continuous_hr_max);
-//                     if (continous_hr_warn_cnt > CONTINUOUS_HR_WARN_TIME) {
-//                         continous_hr_warn_cnt = 0;
-//                         detection_hd.heart_rate();
-//                     }
-//                 }
-// #if (CONTINUE_HEART_RATE_MODE==CONTINUE_HEART_RATE_THRESHOLD_MAX_MIN)
-//                 else if (whr.HR < whr.continuous_hr_min) {
-//                     printf("hr_warn_time=%ds target_time=%ds real_hr=%d dete_hr_min%d\n", continous_hr_warn_cnt, CONTINUOUS_HR_WARN_TIME, whr.HR, whr.continuous_hr_min);
-//                     if (continous_hr_warn_cnt > CONTINUOUS_HR_WARN_TIME) {
-//                         continous_hr_warn_cnt = 0;
-//                         /* detection_hd.heart_rate(); */
-//                     }
-//                 }
-// #endif
-//                 else {
-//                     continous_hr_warn_cnt = 0;
-//                 }
-//                 continue;
-//             } else if (whr.exercise_hr_detection_status == 1) {
-//                 whr.HR = HR_DATA;
-//                 if (wspo2.read_status == 1) { //检测到血氧线程挂起，则优先释放hrsensor资源给血氧
-//                     break;
-//                 }
-//                 if (whr.HR >= whr.exercise_hr_max) {
-//                     printf("real_hr=%d dete_hr_max\n", whr.HR, whr.exercise_hr_max);
-//                     detection_hd.heart_rate();
-//                 }
-//                 continue;
-//             }
-//             if (whr.read_status == 0) {
-//                 break;
-//             }
-//             cnt++;
-//         }
-//         //关闭传感器
-//         hr_sensor_io_ctl(HR_SENSOR_DISABLE, NULL);
-//         whr.read_status = 0;
-//         os_mutex_post(&SENSOR_MUTEX);//防止心率血氧冲突
-//     }
-// }
 
 static u8 save_exercise_heart_rate(u8 enable, u8 hr_threshold)
 {
@@ -707,7 +551,6 @@ static u8 get_heart_rate(void)
 {
     printf("%s", __func__);
 #if TCFG_HR_SENSOR_ENABLE
-printf("get in heart for value five");
     printf("HR=%d", whr.HR);
     return whr.HR;//如果设备不在线，返回值为0
 #else
@@ -715,20 +558,15 @@ printf("get in heart for value five");
     return whr.HR;
 #endif
 }
-
 static u8 get_heart_rate_wear(void)
 {
-#if TCFG_HRS3605_EN || TCFG_HRS1662_EN
 	 whr.out[0] = get_hrs_wear_results();
-#endif
     return whr.out[0];
 }
 
 static u8 get_resting_heart_rate(void)
 {
-#if TCFG_HRS3605_EN || TCFG_HRS1662_EN
-printf("get in heart for value six");
-    whr.hrresting = get_hrs_results();
+#if TCFG_HR_SENSOR_ENABLE
     return whr.hrresting;
 #else
     return 70;
@@ -737,7 +575,6 @@ printf("get in heart for value six");
 static u8 get_min_heart_rate(void)
 {
 #if TCFG_HR_SENSOR_ENABLE
-printf("get in heart for value seven");
     return whr.hrmin;
 #else
     return 80;
@@ -746,42 +583,11 @@ printf("get in heart for value seven");
 u8 get_max_heart_rate(void)
 {
 #if TCFG_HR_SENSOR_ENABLE
-printf("get in heart for value eight");
     return whr.hrmax;
 #else
     return 150;
 #endif
 }
-
-// static u8 get_heart_rate_wear(void)
-// {
-//     return whr.out[0];
-// }
-
-// static u8 get_resting_heart_rate(void)
-// {
-// #if TCFG_HR_SENSOR_ENABLE
-//     return whr.hrresting;
-// #else
-//     return 70;
-// #endif
-// }
-// static u8 get_min_heart_rate(void)
-// {
-// #if TCFG_HR_SENSOR_ENABLE
-//     return whr.hrmin;
-// #else
-//     return 80;
-// #endif
-// }
-// u8 get_max_heart_rate(void)
-// {
-// #if TCFG_HR_SENSOR_ENABLE
-//     return whr.hrmax;
-// #else
-//     return 150;
-// #endif
-// }
 
 void clr_hr_info(void) //重置心率值
 {
@@ -1291,7 +1097,7 @@ static u8 set_watch_sport_initial_value_before(void)   //初始化前的参数�
         PI.age = age;
     }
     PI.gender = info.gender;
-    /* printf("%s %d %d %d %d", __func__, PI.height, PI.weight, PI.gender, PI.age); */
+     printf("%s %d %d %d %d", __func__, PI.height, PI.weight, PI.gender, PI.age);
     return 0;
 }
 static u8 set_watch_sport_initial_value_back(void)   //初始化后的一些功能开关,
@@ -1599,7 +1405,7 @@ int detection_init(void)
     sport_exercise_heart_rate_get((e_heart_rate *)buf);
     /* printf("%s %d",__func__,buf[0]); */
     if (buf[0] == 0) {
-        buf[0] = 120; //不设置数值时，默认120触发
+        buf[0] = 120; //不设置数值时，默认120触发//运动设置值
     }
     save_exercise_heart_rate(enable, buf[0]);
     save_exercise_heart_rate_mode(enable, buf[1]);

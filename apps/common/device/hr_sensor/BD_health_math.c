@@ -206,150 +206,45 @@ int BD_16XX_io_ctl(u8 cmd, void *arg)
         hrs_enable_swich = 1;
         printf("[hrs1662]bd 1662 init succese");
         }
-        else{
-        printf("[hrs1662]bd 1662 init failed !!!");
-        }
+        else printf("[hrs1662]bd 1662 init failed !!!");
         break;
     case HR_SENSOR_DISABLE:
         BD_16XX_close();
         hrs_enable_swich = 0;
         break;
-    /*case HR_SENSOR_READ_DATA:
-        BD_16XX_datapro();
-        break;*/
+    case HR_SENSOR_READ_DATA:
+        printf("HR_SENSOR_READ_DATA");
+        //BD_16XX_datapro();
+        break;
     case HR_SEARCH_SENSOR:
         BD_heartbp_init();//---算法初始化放在所有函数之前，即第一位
         BD_Sensor_Init();
         char res = 1;
 		memcpy(arg, &res, 1);
         break;
-    default:
-        break;
-    }
-    return 0;
-}
-/*
-int Hrs3605_io_ctl(u8 cmd, void *arg)
-{
-	//printf("%s cmd = %d",__func__,cmd);
-    switch (cmd) {
-    case HR_SENSOR_ENABLE://0
-#ifdef HRS_ALG_LIB
-	if(!!hx3605_hrs_enable())
-	{
-
-	    printf("faild");
-		break;
-	}
-	hrs_enable_swich = 1;
-#endif
-	break;
-    case HR_SENSOR_DISABLE://1
-#ifdef HRS_ALG_LIB
-        hx3605_hrs_disable();
-	hrs_enable_swich = 0;
-
-            break;
-
-#endif
-        break;
-    case SPO2_SENSOR_ENABLE://2
-#ifdef SPO2_ALG_LIB
-		if(hx3605_spo2_enable())
-		{
-            printf("faild");
-            break;
-		}
-		spo_enable_swich = 1;
-#endif
-		break;
-    case SPO2_SENSOR_DISABLE://3
-#ifdef SPO2_ALG_LIB
-        hx3605_spo2_disable();
-		spo_enable_swich = 0;
-
-            break;
-#endif
-    case HR_SENSOR_READ_DATA://4
-		//printf("HR_SENSOR_READ_DATA=get_op_hrs_results = %d\n",get_op_hrs_results);
-		return 1;
-		break;
-    case SPO2_SENSOR_READ_DATA://5
-        //返回血氧传感器数据
-		//printf("SPO2_SENSOR_READ_DATA=get_op_spo2_results = %d\n",get_op_spo2_results);
-		return 1;
-		break;
-    case HR_SEARCH_SENSOR://6
-		if (!hx3605_chip_check())
-		{
-			printf("hx3690l check id failed!\r\n");
-		break;
-		}
-		char res = 1;
-		memcpy(arg, &res, 1);
-
-		break;
-    default:
-        break;
-    }
-    return 0;
-}*/
-/*
-int BD_16XX_io_ctl(u8 cmd, void *arg)
-{
-	printf("[hrs1662]%s cmd = %d",__func__,cmd);
-    switch (cmd) {
-    case HR_SENSOR_ENABLE:
-    printf("[hrs1662]1111111111");
-
-        hrsensortimes = arg;
-        cbuf_init(&hrsensor_cbuf, hrsensorcbuf, 24 * sizeof(int));
-        hrs3603_hr_enable();
-        break;
-    case HR_SENSOR_DISABLE:
-    printf("[hrs1662]222222222");
-        hrsensortimes = arg;
-        cbuf_clear(&hrsensor_cbuf);
-        hrs3603_disable();
-        break;
     case SPO2_SENSOR_ENABLE:
-    printf("[hrs1662]333333333");
-        hrsensortimes = arg;
-        cbuf_init(&hrsensor_cbuf, hrsensorcbuf, 24 * sizeof(int));
-        hrs3603_spo2_enable();
-        break;
-    case SPO2_SENSOR_DISABLE:
-    printf("[hrs1662]44444444");
-        hrsensortimes = arg;
-        cbuf_clear(&hrsensor_cbuf);
-        hrs3603_disable();
-        break;
-    case HR_SENSOR_READ_DATA:
-        BD_16XX_datapro();
-    printf("[hrs1662]555555555");
-        //返回心率传感器数据
-        return read_hrs3603_result(arg);
-        break;
-    case SPO2_SENSOR_READ_DATA:
-     printf("[hrs1662]66666666");
-        //返回血氧传感器数据
-        return read_hrs3603_spo2_result(arg);
-        break;
-    case HR_SEARCH_SENSOR:
-     printf("[hrs1662]77777777");
-        if (Hrs3603_chip_check_id() == true) {
-            char res = 1;
-            memcpy(arg, &res, 1);
-        } else {
-            char res = 0;
-            memcpy(arg, &res, 1);
+        if(BD_16XX_init_start()){
+        spo_enable_swich = 1;
+        printf("[hrs1662]bd 1662 init succese");
+        }
+        else{
+        printf("[hrs1662]bd 1662 init failed !!!");
         }
         break;
+    case SPO2_SENSOR_DISABLE:
+        BD_16XX_close();
+        spo_enable_swich = 0;
+        break;
+    case SPO2_SENSOR_READ_DATA:
+        printf("SPO2_SENSOR_READ_DATA");
+        break;
     default:
         break;
     }
     return 0;
-}*/
+
+}
+
 REGISTER_HR_SENSOR(hrSensor) = {
     .logo = "hx1662",
     .heart_rate_sensor_init = BD_16XX_init_start,
