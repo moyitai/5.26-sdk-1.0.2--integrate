@@ -702,7 +702,7 @@
 
 1652426276 e:\5.21-testsdk_demo\test3_raw_sdk(1.0.2)\701n_watch_release_v1.0.2\sdk\apps\common\audio\audio_type.h
 
-1653481135 e:\5.21-testsdk_demo\test3_raw_sdk(1.0.2)\701n_watch_release_v1.0.2\sdk\apps\watch\board\br28\board_701n_demo\board_701n_demo_cfg.h
+1653532749 e:\5.21-testsdk_demo\test3_raw_sdk(1.0.2)\701n_watch_release_v1.0.2\sdk\apps\watch\board\br28\board_701n_demo\board_701n_demo_cfg.h
 	"board_701n_demo_global_build_cfg.h"
 	"usb_std_class_def.h"
 
@@ -2340,7 +2340,7 @@
 	"typedef.h"
 	"bt_common.h"
 
-1652426249 source:e:\5.21-testsdk_demo\test3_raw_sdk(1.0.2)\701n_watch_release_v1.0.2\sdk\apps\common\ui\lcd\lcd_ui_api.c
+1653530157 source:e:\5.21-testsdk_demo\test3_raw_sdk(1.0.2)\701n_watch_release_v1.0.2\sdk\apps\common\ui\lcd\lcd_ui_api.c
 	"app_config.h"
 	"includes.h"
 	"ui/ui_api.h"
@@ -7358,7 +7358,7 @@
 	"ui/ui_core.h"
 	"rect.h"
 
-1652426228 source:e:\5.21-testsdk_demo\test3_raw_sdk(1.0.2)\701n_watch_release_v1.0.2\sdk\apps\watch\ui\lcd\style_watch_new\ui_action_menu.c
+1653532467 source:e:\5.21-testsdk_demo\test3_raw_sdk(1.0.2)\701n_watch_release_v1.0.2\sdk\apps\watch\ui\lcd\style_watch_new\ui_action_menu.c
 	"app_config.h"
 	"ui/ui_style.h"
 	"ui/ui.h"
@@ -7842,7 +7842,7 @@
 	"key_event_deal.h"
 	"debug.h"
 
-1652426228 source:e:\5.21-testsdk_demo\test3_raw_sdk(1.0.2)\701n_watch_release_v1.0.2\sdk\apps\watch\ui\lcd\ui_screen_saver.c
+1653528494 source:e:\5.21-testsdk_demo\test3_raw_sdk(1.0.2)\701n_watch_release_v1.0.2\sdk\apps\watch\ui\lcd\ui_screen_saver.c
 	"app_config.h"
 	"timer.h"
 	"ui/res_config.h"
