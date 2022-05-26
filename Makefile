@@ -270,6 +270,7 @@ c_SRC_FILES := \
 	apps/common/device/bmp280/bmp280.c \
 	apps/common/device/detection.c \
 	apps/common/device/gSensor/SC7A20.c \
+	apps/common/device/gSensor/SL_Watch_Pedo_Kcal_Wrist_Sleep_Sway_Application.c \
 	apps/common/device/gSensor/gSensor_manage.c \
 	apps/common/device/gSensor/mc3433.c \
 	apps/common/device/gSensor/mpu6050.c \

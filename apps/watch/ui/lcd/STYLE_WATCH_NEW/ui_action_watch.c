@@ -18,6 +18,9 @@
 #include "asm/math_fast_function.h"
 #include "ui/result_pic_index.h"
 #include "ui/result_str_index.h"
+#include "gSensor/SL_Watch_Pedo_Kcal_Wrist_Sleep_Sway_Algorithm.h"
+//#include "hx3605/hx3605.h"
+#include "hrSensor_manage.h"
 
 #if TCFG_UI_ENABLE && (!TCFG_LUA_ENABLE)
 #ifdef CONFIG_UI_STYLE_JL_ENABLE
@@ -320,7 +323,6 @@ REGISTER_UI_EVENT_HANDLER(TARGET_SLEEP_HOUR)
 
 #endif
 
-
 static void PROGRESS_SLEEP_timer(void *priv)
 {
     if (!watch_progress_sleep_timer) {
@@ -332,6 +334,9 @@ static void PROGRESS_SLEEP_timer(void *priv)
     static int last_min = 0;
     static int last_percent = 0;
     int percent = 0;
+	static char sleep_hrs_result = 0;
+	static char sleep_wear_result = 0;
+	static char sleep_sec = 0;
     struct progress_sleep_priv *this = (struct progress_sleep_priv *)priv;
 
     /* if (++this->sec >= 60) { */
@@ -343,9 +348,44 @@ static void PROGRESS_SLEEP_timer(void *priv)
     /* } */
     /* } */
     /* } */
-
+	printf("PROGRESS_SLEEP_timer====");
+	if(get_sleep_status())
+	{
+	    printf("PROGRESS_SLEEP_timer====111");
+        #if TCFG_HRS3605_EN || TCFG_HRS1662_EN
+        if(!get_hrs_enable_status())
+		{
+			printf("PROGRESS_SLEEP_timer====222");
+			hr_sensor_io_ctl(HR_SENSOR_DISABLE, NULL);
+			hr_sensor_io_ctl(HR_SENSOR_ENABLE, NULL);
+		}
+	    sleep_hrs_result = get_hrs_results();//getCurrentHR(whr.workbuf);//实时调取心率
+	    sleep_wear_result = get_hrs_wear_results();
+        #else
+        sleep_hrs_result = 78;
+        sleep_wear_result = 1;
+        #endif
+		printf("hrs %d wear %d",sleep_hrs_result,sleep_wear_result);
+		if(sleep_wear_result)
+		{
+		sleep_sec++;
+		if(sleep_sec>=60)
+			{
+			sleep_sec = 0;
+			this->min++;
+		}
+		}
+	}
+	else{
+         #if TCFG_HRS3605_EN || TCFG_HRS1662_EN
+		if(get_hrs_enable_status()){
+		hr_sensor_io_ctl(HR_SENSOR_DISABLE, NULL);
+		}
+        #endif
+	}
     //test
-    this->min += 10;
+    //this->min += 10;
+    printf("this->min %d",this->min);
     if (this->min >= 60) {
         this->min = 0;
         this->hour++;
@@ -387,11 +427,83 @@ static void PROGRESS_SLEEP_timer(void *priv)
         last_percent = percent;
     }
 #else
+	printf("PROGRESS_SLEEP_timer====22222222222222222222");
 
     ui_update_source_by_elm(priv, 1);
 
 #endif
 }
+// static void PROGRESS_SLEEP_timer(void *priv)
+// {
+//     if (!watch_progress_sleep_timer) {
+//         return ;
+//     }
+
+// #if OLDER_STYLE
+//     static int last_hour = 0;
+//     static int last_min = 0;
+//     static int last_percent = 0;
+//     int percent = 0;
+//     struct progress_sleep_priv *this = (struct progress_sleep_priv *)priv;
+
+//     /* if (++this->sec >= 60) { */
+//     /* this->sec = 0; */
+//     /* if (++this->min >= 60) { */
+//     /* this->min = 0; */
+//     /* if (++this->hour >= 12) { */
+//     /* this->hour = 0; */
+//     /* } */
+//     /* } */
+//     /* } */
+
+//     //test
+//     this->min += 10;
+//     if (this->min >= 60) {
+//         this->min = 0;
+//         this->hour++;
+//         /* if (this->hour >= 8) { */
+//         /* this->hour = 0; */
+//         /* } */
+//     }
+
+//     if ((this->hour == 8) && (this->min == 10)) {
+//         this->hour = 0;
+//         this->min = 0;
+//     }
+
+//     if (last_hour != this->hour) {
+//         struct unumber numb_hour;
+//         numb_hour.type = TYPE_NUM;
+//         numb_hour.numbs = 1;
+//         numb_hour.number[0] = this->hour;
+//         ui_number_update_by_id(SLEEP_HOUR, &numb_hour);
+
+//         last_hour = this->hour;
+//     }
+
+//     if (last_min != this->min) {
+//         struct unumber numb_min;
+//         numb_min.type = TYPE_NUM;
+//         numb_min.numbs = 1;
+//         numb_min.number[0] = this->min;
+//         ui_number_update_by_id(SLEEP_MIN, &numb_min);
+
+//         last_min = this->min;
+//     }
+
+//     percent = (this->hour * 3600 + this->min * 60 + this->sec) / (8 * 36);
+//     if (last_percent != percent) {
+//         ui_io_set(IO_FRAME, HIGH);
+//         ui_progress_set_persent_by_id(PROGRESS_SLEEP, percent);
+//         ui_io_set(IO_FRAME, LOW);
+//         last_percent = percent;
+//     }
+// #else
+
+//     ui_update_source_by_elm(priv, 1);
+
+// #endif
+// }
 
 
 static int PROGRESS_SLEEP_onchange(void *ctr, enum element_change_event e, void *arg)
