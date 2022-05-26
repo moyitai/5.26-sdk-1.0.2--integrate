@@ -200,6 +200,7 @@ INCLUDES := \
 	-Iapps/common/include \
 	-Iapps/common/config/include \
 	-Iapps/common/device/hr_sensor \
+	-Iapps/common/device/gSensor \
 	-Iapps/common/device/bmp280 \
 	-Iapps/common/device/nfc \
 	-Iapps/watch/board/br28 \
@@ -915,6 +916,7 @@ LFLAGS := \
 	cpu/br28/liba/HeartRate_Calc.a \
 	cpu/br28/liba/sedentary.a \
 	cpu/br28/liba/SPO2.a \
+	cpu/br28/liba/libSL_Watch_Pedo_Kcal_Wrist_Sleep_Sway_Algorithm.a \
 	cpu/br28/liba/libFFT_pi32v2_OnChip.a \
 	cpu/br28/liba/wtg_dec_lib.a \
 	cpu/br28/liba/bfilterfun_lib.a \
@@ -929,7 +931,7 @@ LFLAGS := \
 	cpu/br28/liba/font_new.a \
 	cpu/br28/liba/res_new.a \
 	cpu/br28/liba/ui_flash_vm.a \
-	cpu/br28/liba/libbd166xbpmsdk.a\
+	cpu/br28/liba/libbd166xbpmsdk.a \
 	--end-group \
 	-Tcpu/br28/sdk.ld \
 	-M=cpu/br28/tools/sdk.map \

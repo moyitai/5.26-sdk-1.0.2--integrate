@@ -394,7 +394,7 @@ static void PROGRESS_SLEEP_timer(void *priv)
     /* } */
     /* } */
 	printf("PROGRESS_SLEEP_timer====");
-	if(get_sleep_status())
+	if(1/*get_sleep_status()*/)
 	{
 	    printf("PROGRESS_SLEEP_timer====111");
         #if TCFG_HRS3605_EN || TCFG_HRS1662_EN

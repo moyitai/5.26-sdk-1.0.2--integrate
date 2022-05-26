@@ -20,7 +20,8 @@
 #include "sport_info_sleep_detection.h"
 #include "sys_time.h"
 #include "clock_cfg.h"
-#include"BD_health_math.h"
+#include "BD_health_math.h"
+#include "gSensor/SL_Watch_Pedo_Kcal_Wrist_Sleep_Sway_Algorithm.h"
 
 #define USED_TIMER         (1)
 #define USED_TASK          (2)
@@ -708,7 +709,6 @@ static u8 get_heart_rate(void)
 #if TCFG_HR_SENSOR_ENABLE
 printf("get in heart for value five");
     printf("HR=%d", whr.HR);
-
     return whr.HR;//如果设备不在线，返回值为0
 #else
     whr.HR = 120;

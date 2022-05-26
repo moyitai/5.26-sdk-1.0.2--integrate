@@ -12,7 +12,7 @@
 #include "printf.h"
 #include <stdint.h>
 #include <stdlib.h>
-#include"BD_health_math.h"
+#include "hr_sensor/BD_health_math.h"
 
 #if TCFG_HRS1662_EN
 uint16_t bp_data_up,bp_data_down,bp_difdata;//---定义脱手阀值寄存器

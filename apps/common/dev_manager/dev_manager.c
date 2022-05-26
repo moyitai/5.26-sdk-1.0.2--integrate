@@ -1026,6 +1026,7 @@ static void dev_manager_task(void *p)
 	force_set_sd_online("sd1");
 	int err = dev_manager_add("sd1");
 #endif
+	int err = dev_manager_add("sd1");
 	if (err != 0) {
 		printf("sd add fail\n");
 	} else {
