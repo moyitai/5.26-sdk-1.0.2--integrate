@@ -102,7 +102,7 @@
 //*********************************************************************************//
 //                                  SD 配置                                        //
 //*********************************************************************************//
-#define TCFG_SD0_ENABLE						ENABLE_THIS_MOUDLE	//SD0模块使能
+#define TCFG_SD0_ENABLE						DISABLE_THIS_MOUDLE	//SD0模块使能
 #define TCFG_SD0_DAT_MODE					1               //线数设置，1：一线模式  4：四线模式
 #define TCFG_SD0_DET_MODE					SD_IO_DECT//SD_CLK_DECT		//SD卡检测方式
 #define TCFG_SD0_DET_IO                     IO_PORTB_03      //当检测方式为IO检测可用
